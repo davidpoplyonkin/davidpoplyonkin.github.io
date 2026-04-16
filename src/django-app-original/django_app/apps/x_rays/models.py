@@ -1,0 +1,26 @@
+from django.db import models
+from django.urls import reverse
+
+from ..patients.models import Patient
+
+
+class XRaysExamination(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    examination = models.CharField(max_length=200)
+    date = models.DateField()
+    medical_record_number = models.CharField(max_length=20, blank=True)
+    eed = models.CharField(max_length=20, blank=True)
+    technical_parameters = models.TextField()
+    description = models.TextField()
+    conclusion = models.TextField()
+    recommendations = models.TextField()
+    doctor_name = models.CharField(max_length=30)
+
+    class Meta:
+        ordering = ["-date"]
+
+    def __str__(self):
+        return f"X-Rays Examination #{self.pk}"
+
+    def get_absolute_url(self):
+        return reverse("x_rays:x-rays-detail", kwargs={"pk": self.pk})

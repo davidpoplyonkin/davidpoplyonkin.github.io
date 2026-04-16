@@ -1,0 +1,25 @@
+# Virtual environment
+.venv/
+
+# Cache
+__pycache__
+
+# Database
+db.sqlite3
+
+# Local settings file
+.env
+
+# macOS Finder
+.DS_Store
+
+# PDF generators
+*_pdf_generator.py
+!example_pdf_generator.py
+
+# Static
+django_app/static/img/
+django_app/static/fonts/
+
+# SSL Certificate
+*.pem

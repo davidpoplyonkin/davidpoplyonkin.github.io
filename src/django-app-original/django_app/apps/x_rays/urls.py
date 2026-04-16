@@ -1,0 +1,15 @@
+from django.urls import path
+
+from . import views
+
+app_name = "x_rays"
+
+urlpatterns = [
+    path("", views.x_rays_list_view, name="x-rays-list"),
+    path("<int:pk>/", views.x_rays_detail_view, name="x-rays-detail"),
+    path("new/", views.XRaysCreateView.as_view(), name="x-rays-create"),
+    path("<int:pk>/update/", views.XRaysUpdateView.as_view(), name="x-rays-update"),
+    path("<int:pk>/delete/", views.x_rays_delete_view, name="x-rays-delete"),
+    path("<int:pk>/copy/", views.x_rays_copy, name="x-rays-copy"),
+    path("<int:pk>/print/", views.x_rays_print, name="x-rays-print"),
+]
