@@ -2,8 +2,16 @@ services:
   api:
     build:
       context: ./api
-    env_file:
-      - ./api/.env
+      additional_contexts:
+        shared: ./shared
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - API_ALLOW_ORIGINS=${API_ALLOW_ORIGINS}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TG_TOKEN=${TG_TOKEN}
+      - ADMIN_TG_ID=${ADMIN_TG_ID}
+      - BOT_API_KEY=${API_KEY}
     depends_on:
       - postgres
     networks:
@@ -11,8 +19,8 @@ services:
   dashboard:
     build:
       context: ./dashboard
-    env_file:
-      - ./dashboard/.env
+    environment:
+      - VITE_API_URL=${API_URL}
     depends_on:
       - api
     networks:
@@ -27,13 +35,34 @@ services:
     networks:
       - master-nginx-network
       - internal
+  redis:
+    image: redis:7.4-alpine
+    command: >
+      redis-server 
+      --requirepass ${REDIS_PASSWORD} 
+      --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
   bot:
     build:
       context: ./bot
-    env_file:
-      - ./bot/.env
+      additional_contexts:
+        shared: ./shared
+    environment:
+      - TG_TOKEN=${TG_TOKEN}
+      - ADMIN_TG_ID=${ADMIN_TG_ID}
+      - API_KEY=${API_KEY}
+      - TZ=${TZ}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - API_URL=${API_URL}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DASHBOARD_URL=${DASHBOARD_URL}
     depends_on:
-      - postgres
+      - redis
+      - api
     networks:
       - internal
   postgres:
@@ -41,12 +70,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-    env_file:
-      - ./postgres/.env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TZ=${TZ}
     networks:
       - internal
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   internal:
