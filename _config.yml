@@ -1,0 +1,10 @@
+title: "David Poplyonkin"
+remote_theme: "mmistakes/minimal-mistakes@4.28.0"
+
+minimal_mistakes_skin: "dark"
+atom_feed:
+  hide: true
+
+plugins:
+- jekyll-remote-theme
+- jekyll-include-cache
